@@ -1,29 +1,18 @@
-#include <stdio.h>
 
-
-  int Math__add(int a, int b) {
-    return a + b;
-  }
-
-  int Math__multiply(int a, int b) {
-    return a * b;
-  }
-
-
-  
-  void Text__hello() {
-    printf("Hello from Text namespace!\n");
+typedef struct Point {
+  int x;
+  int y;
+} *Point;
+  void Point__move(Point self, int x, int y) {
+    self->x = x;
+    self->y = y;
   }
 
 
 int main() {
-  int result = Math__add(5, 3);
 
-  printf("Result: %d\n", result);
-
-  Math__multiply(4, 2);
-
-  Text__hello();
+  Point p;
+  Point__move(p, 10, 10);
 
   return 0;
 }

@@ -59,5 +59,64 @@ public partial class Preprocessor
       }
       return ident.ToString();
     });
+
+    Register(Wakeup(TokenType.Class), () =>
+    {
+      Consume();
+      RemoveSource();
+      string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
+      currentClass = MangleNamespaces(name);
+
+      bool hasimpl = LookAhead(TokenType.Impl);
+
+      StringBuilder builder = new();
+
+      builder.Append($"typedef struct {currentClass} {{");
+
+      var temp = () =>
+      {
+        string? s = ProcessOne();
+        if (s != null)
+          builder.Append(s);
+      };
+
+      if (hasimpl)
+        DoUntil(TokenType.Impl, temp);
+      else
+        DoUntil(TokenType.End, temp);
+
+      builder.Append($"}} *{currentClass};");
+
+      if (hasimpl)
+      {
+        DoUntil(TokenType.End, () =>
+        {
+          string? s = ProcessOne();
+          if (s != null)
+            builder.Append(s);
+        });
+      }
+
+      currentClass = null;
+      return builder.ToString();
+    });
+
+    Register(Wakeup(TokenType.Method), () =>
+    {
+      Consume();
+      RemoveSource();
+      string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
+      if (currentClass == null)
+        throw new Exception("Cannot use method outside of class");
+      return $"{currentClass}__{name}";
+    });
+
+    Register(Wakeup(TokenType.Self), () =>
+    {
+      Consume();
+      if (currentClass == null)
+        throw new Exception("Cannot use Self outside of class");
+      return $"{currentClass} self";
+    });
   }
 }

@@ -64,6 +64,18 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "end")
         return new(TokenType.End, line);
+
+      if (buffer == "class")
+        return new(TokenType.Class, line);
+      
+      if (buffer == "impl")
+        return new(TokenType.Impl, line);
+      
+      if (buffer == "method")
+        return new(TokenType.Method, line);
+      
+      if (buffer == "Self")
+        return new(TokenType.Self, line);
       
       return new(TokenType.Identifier, line, buffer);
     }

@@ -12,3 +12,4 @@
 /home/globalastral/Scrivania/Cplus/obj/Debug/net10.0/Cplus.pdb
 /home/globalastral/Scrivania/Cplus/obj/Debug/net10.0/Cplus.genruntimeconfig.cache
 /home/globalastral/Scrivania/Cplus/obj/Debug/net10.0/ref/Cplus.dll
+/home/globalastral/Scrivania/Cplus/obj/Debug/net10.0/Cplus.sourcelink.json

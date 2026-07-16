@@ -94,4 +94,20 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
       I? _ = Consume();
     }
   }
+
+  protected bool LookAhead(C value)
+  {
+    int prev_peek = peek;
+    while (HasPeek())
+    {
+      if (PeekEqual(value))
+      {
+        peek = prev_peek;
+        return true;
+      }
+      Consume();
+    }
+    peek = prev_peek;
+    return false;
+  }
 }

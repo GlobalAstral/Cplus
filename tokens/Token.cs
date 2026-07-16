@@ -11,6 +11,10 @@ public enum TokenType
   Colon,
   Source,
   End,
+  Class,
+  Impl,
+  Method,
+  Self
 }
 
 public record Token(TokenType Type, int Line, object? Value)

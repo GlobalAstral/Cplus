@@ -7,6 +7,7 @@ namespace preprocessor;
 public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, string>(tokens, (t, type) => t != null && t.Type == type)
 {
   private readonly Stack<string> namespaces = [];
+  private string? currentClass = null;
 
   private void RemoveSource()
   {
