@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Cplus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d970e21199d5ae4a537884e4d03c157807d98c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed908e3f6e70bf784bbefe58db3045fc9d2fab34")]
 [assembly: System.Reflection.AssemblyProductAttribute("Cplus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Cplus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
