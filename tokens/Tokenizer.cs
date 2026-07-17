@@ -77,6 +77,21 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       if (buffer == "Self")
         return new(TokenType.Self, line);
       
+      if (buffer == "constructor")
+        return new(TokenType.Constructor, line);
+      
+      if (buffer == "destructor")
+        return new(TokenType.Destructor, line);
+
+      if (buffer == "new")
+        return new(TokenType.New, line);
+      
+      if (buffer == "delete")
+        return new(TokenType.Delete, line);
+      
+      if (buffer == "SelfAlloc")
+        return new(TokenType.SelfAlloc, line);
+      
       return new(TokenType.Identifier, line, buffer);
     }
 

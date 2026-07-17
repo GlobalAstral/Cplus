@@ -14,6 +14,19 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
     while (TryConsume(TokenType.Source));
   }
 
+  private string ParseIdentifier()
+  {
+    StringBuilder ident = new();
+    ident.Append(TryConsumeErr(TokenType.Identifier)!.GetStr()!);
+    while (PeekEqual(TokenType.Colon) && PeekEqual(TokenType.Colon, 1))
+    {
+      Consume(2);
+      string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
+      ident.Append($"__{name}");
+    }
+    return ident.ToString();
+  }
+
   private string MangleNamespaces(string add)
   {
     StringBuilder builder = new();
@@ -24,6 +37,7 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
   }
 
   private Func<bool> Wakeup(TokenType token) => () => PeekEqual(token);
+  private Func<bool> WakeupC(TokenType token) => () => TryConsume(token);
   protected override string? ProcessOne()
   {
     foreach (Directive directive in directives)

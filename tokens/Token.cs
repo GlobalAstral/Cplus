@@ -14,7 +14,12 @@ public enum TokenType
   Class,
   Impl,
   Method,
-  Self
+  Self,
+  Constructor,
+  Destructor,
+  New,
+  Delete,
+  SelfAlloc
 }
 
 public record Token(TokenType Type, int Line, object? Value)

@@ -17,8 +17,7 @@ public partial class Preprocessor
 
     //! Namespace
 
-    Register(Wakeup(TokenType.Namespace), () => {
-      Consume();
+    Register(WakeupC(TokenType.Namespace), () => {
       RemoveSource();
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       namespaces.Push(name);
@@ -37,9 +36,8 @@ public partial class Preprocessor
 
     //! Mangle
 
-    Register(Wakeup(TokenType.Mangle), () =>
+    Register(WakeupC(TokenType.Mangle), () =>
     {
-      Consume();
       RemoveSource();
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       return MangleNamespaces(name);
@@ -47,22 +45,12 @@ public partial class Preprocessor
 
     //! Identifiers
 
-    Register(Wakeup(TokenType.Identifier), () =>
-    {
-      StringBuilder ident = new();
-      ident.Append(Consume()!.GetStr()!);
-      while (PeekEqual(TokenType.Colon) && PeekEqual(TokenType.Colon, 1))
-      {
-        Consume(2);
-        string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
-        ident.Append($"__{name}");
-      }
-      return ident.ToString();
-    });
+    Register(Wakeup(TokenType.Identifier), () => ParseIdentifier());
+    
+    //! Classes
 
-    Register(Wakeup(TokenType.Class), () =>
+    Register(WakeupC(TokenType.Class), () =>
     {
-      Consume();
       RemoveSource();
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       currentClass = MangleNamespaces(name);
@@ -73,12 +61,12 @@ public partial class Preprocessor
 
       builder.Append($"typedef struct {currentClass} {{");
 
-      var temp = () =>
+      void temp()
       {
         string? s = ProcessOne();
         if (s != null)
           builder.Append(s);
-      };
+      }
 
       if (hasimpl)
         DoUntil(TokenType.Impl, temp);
@@ -100,10 +88,11 @@ public partial class Preprocessor
       currentClass = null;
       return builder.ToString();
     });
+    
+    //! Method
 
-    Register(Wakeup(TokenType.Method), () =>
+    Register(WakeupC(TokenType.Method), () =>
     {
-      Consume();
       RemoveSource();
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       if (currentClass == null)
@@ -111,12 +100,62 @@ public partial class Preprocessor
       return $"{currentClass}__{name}";
     });
 
-    Register(Wakeup(TokenType.Self), () =>
+    //! Self
+    //TODO CHECK IF NOT IN FIRST ARGUMENT ERROR
+    Register(WakeupC(TokenType.Self), () =>
     {
-      Consume();
       if (currentClass == null)
         throw new Exception("Cannot use Self outside of class");
       return $"{currentClass} self";
+    });
+
+    //! Constructor
+
+    Register(WakeupC(TokenType.Constructor), () =>
+    {
+      if (currentClass == null)
+        throw new Exception("Cannot use constructor outside of class");
+      
+      return $"{currentClass} ctor__{currentClass}";
+    });
+
+    //! Destructor
+
+    Register(WakeupC(TokenType.Destructor), () =>
+    {
+      if (currentClass == null)
+        throw new Exception("Cannot use destructor outside of class");
+      
+      return $"void dtor__{currentClass}";
+    });
+
+    //! New
+
+    Register(WakeupC(TokenType.New), () =>
+    {
+      RemoveSource();
+      Token? t = Peek();
+      string name = ParseIdentifier();
+      return $"ctor__{name}";
+    });
+
+    //! Delete
+
+    Register(WakeupC(TokenType.Delete), () =>
+    {
+      RemoveSource();
+      string name = ParseIdentifier();
+      return $"dtor__{name}";
+    });
+
+    //! SelfAlloc
+
+    Register(WakeupC(TokenType.SelfAlloc), () =>
+    {
+      if (currentClass == null)
+        throw new Exception("Cannot use SelfAlloc outside of class");
+      
+      return $"{currentClass} self = malloc(sizeof(*self))";
     });
   }
 }
