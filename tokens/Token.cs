@@ -19,7 +19,7 @@ public enum TokenType
   Destructor,
   New,
   Delete,
-  SelfAlloc
+  SelfAlloc,
 }
 
 public record Token(TokenType Type, int Line, object? Value)

@@ -157,5 +157,9 @@ public partial class Preprocessor
       
       return $"{currentClass} self = malloc(sizeof(*self))";
     });
+
+    //! Generic
+
+
   }
 }
