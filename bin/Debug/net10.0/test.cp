@@ -1,26 +1,30 @@
-class Point
-  int x;
-  int y;
-impl
-  constructor(int x, int y) {
-    SelfAlloc;
-    self->x = x;
-    self->y = y;
-    return self;
-  }
-  destructor(Self) {
-    free(self);
-  }
-  void method move(Self, int x, int y) {
-    self->x = x;
-    self->y = y;
-  }
-end
+#include <stdio.h>
+
+namespace Test
+  generic Point T : 
+    class genericAlias
+      T x;
+      T y;
+    impl
+      void move(Self, T x, T y) {
+        self->x = x;
+        self->y = y;
+      }
+      constructor(T x, T y) {
+        SelfAlloc;
+        self->x = x;
+        self->y = y;
+        return self;
+      }
+      destructor(Self) {
+        free(self);
+      }
+    endclass
+  endgeneric
+endnamespace
 
 int main() {
-  Point p = new Point(10, 10);
-  Point::move(p, 10, 10);
-  delete Point(p);
-
+  Test::Point<Test::Point<int>> p = new Test::Point<Test::Point<int>>(10, 10);
+  delete Test::Point<Test::Point<int>>(p);
   return 0;
 }

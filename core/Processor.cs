@@ -9,7 +9,7 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
   protected List<O> output = [];
 
   protected bool HasPeek(int offset = 0) => peek + offset >= 0 && peek + offset < Input.Length;
-  protected I? Peek(int offset = 0) => HasPeek(offset) ? Input[peek] : default;
+  protected I? Peek(int offset = 0) => HasPeek(offset) ? Input[peek + offset] : default;
   protected bool PeekEqual(C value, int offset = 0) => Equ(Peek(offset), value);
   protected I? Consume() => HasPeek() ? Input[peek++] : default;
   protected bool TryConsume(C value)
@@ -21,10 +21,10 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
     }
     return false;
   }
-  protected I? TryConsumeErr(C value)
+  protected I TryConsumeErr(C value)
   {
     if (PeekEqual(value))
-      return Consume();
+      return Consume()!;
     throw new Exception($"Expected {value}");
   }
   protected abstract O? ProcessOne();

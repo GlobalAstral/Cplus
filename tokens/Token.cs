@@ -10,7 +10,9 @@ public enum TokenType
   Identifier,
   Colon,
   Source,
-  End,
+  EndNamespace,
+  EndClass,
+  EndGeneric,
   Class,
   Impl,
   Method,
@@ -20,6 +22,12 @@ public enum TokenType
   New,
   Delete,
   SelfAlloc,
+  Generic,
+  Keyword,
+  GenericAlias,
+  Comma,
+  LAngle,
+  RAngle
 }
 
 public record Token(TokenType Type, int Line, object? Value)

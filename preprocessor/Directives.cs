@@ -12,7 +12,7 @@ public partial class Preprocessor
   public void RegisterDirectives()
   {
     //! Source
-
+    Register(Wakeup(TokenType.Keyword), () => Consume()!.GetStr());
     Register(Wakeup(TokenType.Source), () => Consume()!.GetStr());
 
     //! Namespace
@@ -23,7 +23,7 @@ public partial class Preprocessor
       namespaces.Push(name);
 
       StringBuilder builder = new();
-      DoUntil(TokenType.End, () =>
+      DoUntil(TokenType.EndNamespace, () =>
       {
         string? s = ProcessOne();
         if (s != null)
@@ -52,7 +52,14 @@ public partial class Preprocessor
     Register(WakeupC(TokenType.Class), () =>
     {
       RemoveSource();
-      string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
+      string name;
+      if (TryConsume(TokenType.GenericAlias))
+      {
+        if (GenericContext.Count == 0)
+          throw new Exception("Cannot use genericAlias outside of GenericContext");
+        name = GenericContextName!;
+      } else
+        name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       currentClass = MangleNamespaces(name);
 
       bool hasimpl = LookAhead(TokenType.Impl);
@@ -71,13 +78,13 @@ public partial class Preprocessor
       if (hasimpl)
         DoUntil(TokenType.Impl, temp);
       else
-        DoUntil(TokenType.End, temp);
+        DoUntil(TokenType.EndClass, temp);
 
       builder.Append($"}} *{currentClass};");
 
       if (hasimpl)
       {
-        DoUntil(TokenType.End, () =>
+        DoUntil(TokenType.EndClass, () =>
         {
           string? s = ProcessOne();
           if (s != null)
@@ -101,7 +108,6 @@ public partial class Preprocessor
     });
 
     //! Self
-    //TODO CHECK IF NOT IN FIRST ARGUMENT ERROR
     Register(WakeupC(TokenType.Self), () =>
     {
       if (currentClass == null)
@@ -160,6 +166,34 @@ public partial class Preprocessor
 
     //! Generic
 
+    Register(WakeupC(TokenType.Generic), () =>
+    {
+      RemoveSource();
+      string name = MangleNamespaces(TryConsumeErr(TokenType.Identifier).GetStr()!);
+      List<string> generics = [];
+      RemoveSource();
+      
+      DoUntil(TokenType.Colon, () =>
+      {
+        generics.Add(TryConsumeErr(TokenType.Identifier).GetStr()!);
+        RemoveSource();
+      });
+      
+      List<Token> toks = [];
+      DoUntil(TokenType.EndGeneric, () => toks.Add(Consume()!));
+      Generics.Add(new Generic(name, [ .. generics ], [ .. toks ]));
+      GenericsGenPoint ??= output.Count;
+      return null;
+    });
 
+    //! GenericAlias
+
+    Register(WakeupC(TokenType.GenericAlias), () =>
+    {
+      RemoveSource();
+      if (GenericContext.Count == 0)
+        throw new Exception("Cannot use genericAlias outside of GenericContext");
+      return GenericContextName;
+    });
   }
 }

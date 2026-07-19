@@ -34,16 +34,16 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
     }
 
     if (TryConsume('<'))
-    {
-      StringBuilder builder = new();
-      builder.Append('<');
-      DoUntil('>', () => builder.Append(Consume()));
-      builder.Append('>');
-      return new(TokenType.Source, line, builder.ToString());
-    }
+      return new(TokenType.LAngle, line, "<");
+
+    if (TryConsume('>'))
+      return new(TokenType.RAngle, line, ">");
 
     if (TryConsume(':'))
-      return new(TokenType.Colon, line);
+      return new(TokenType.Colon, line, ":");
+    
+    if (TryConsume(','))
+      return new(TokenType.Comma, line, ",");
     
     if (char.IsAsciiLetter(Peek()) || PeekEqual('_'))
     {
@@ -54,7 +54,7 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       string buffer = builder.ToString();
 
       if (Token.Reserved.Contains(buffer))
-        return new(TokenType.Source, line, buffer);
+        return new(TokenType.Keyword, line, buffer);
 
       if (buffer == "namespace")
         return new(TokenType.Namespace, line);
@@ -62,8 +62,14 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       if (buffer == "mangle")
         return new(TokenType.Mangle, line);
 
-      if (buffer == "end")
-        return new(TokenType.End, line);
+      if (buffer == "endnamespace")
+        return new(TokenType.EndNamespace, line);
+      
+      if (buffer == "endclass")
+        return new(TokenType.EndClass, line);
+      
+      if (buffer == "endgeneric")
+        return new(TokenType.EndGeneric, line);
 
       if (buffer == "class")
         return new(TokenType.Class, line);
@@ -91,6 +97,12 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       
       if (buffer == "SelfAlloc")
         return new(TokenType.SelfAlloc, line);
+      
+      if (buffer == "generic")
+        return new(TokenType.Generic, line);
+
+      if (buffer == "genericAlias")
+        return new(TokenType.GenericAlias, line);
       
       return new(TokenType.Identifier, line, buffer);
     }
