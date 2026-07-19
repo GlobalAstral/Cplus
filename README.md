@@ -1,7 +1,7 @@
 
 # C+
 
->## A tiny preprocessor for C which gives it the few features it lacks.
+>## A tiny preprocessor for C which gives it the few features it lacks
 
 ## Features
 
@@ -145,6 +145,7 @@ add__float(3.1, 1.2);
 ```
 
 ## Notes
+
 ---
 >#### **C+ is not designed as a beginner-friendly replacement for C. It is a tool for experienced C programmers who want to reduce repetitive boilerplate while keeping the control and transparency of C.**
 >#### **C+ assumes that the programmer understands the concepts behind the abstractions being introduced. It does not attempt to replace knowledge with compiler enforcement; instead, it provides a more expressive syntax for common patterns while preserving the underlying C model.**
