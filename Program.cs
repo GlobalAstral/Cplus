@@ -1,6 +1,4 @@
-﻿
-using System.Diagnostics;
-using preprocessor;
+﻿using preprocessor;
 using tokens;
 
 class Program
