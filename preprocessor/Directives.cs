@@ -161,7 +161,7 @@ public partial class Preprocessor
       if (currentClass == null)
         throw new Exception("Cannot use SelfAlloc outside of class");
       
-      return $"{currentClass} self = malloc(sizeof(*self))";
+      return $"{currentClass} self = ({currentClass})malloc(sizeof(*self))";
     });
 
     //! Generic
