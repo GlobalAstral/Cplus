@@ -1,4 +1,12 @@
-obj/Debug/net10.0/*
-
+bin/Debug/net10.0/Cplus
+bin/Debug/net10.0/Cplus.deps.json
+bin/Debug/net10.0/Cplus.dll
+bin/Debug/net10.0/Cplus.pdb
+bin/Debug/net10.0/Cplus.runtimeconfig.json
 obj/Debug/net10.0/Cplus.AssemblyInfo.cs
 obj/Debug/net10.0/Cplus.AssemblyInfoInputs.cache
+obj/Debug/net10.0/Cplus.dll
+obj/Debug/net10.0/Cplus.pdb
+obj/Debug/net10.0/Cplus.sourcelink.json
+obj/Debug/net10.0/ref/Cplus.dll
+obj/Debug/net10.0/refint/Cplus.dll
