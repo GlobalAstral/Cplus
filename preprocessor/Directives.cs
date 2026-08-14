@@ -239,5 +239,11 @@ public partial class Preprocessor
 
       return builder.ToString();
     });
+
+    //! Struct Shortcut
+
+    Register(WakeupC(TokenType.Dollar), () => "struct ");
+
+    
   }
 }

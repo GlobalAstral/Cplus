@@ -11,19 +11,21 @@
 
 - ### Generics
 
+- ### Syntax Tweaks
+
 ## Namespace
 
 ### Syntax
 
 ``` CPP
-namespace Foo
+namespace Foo {
   // bar will be mangled because it is marked
   // with the "mangle" keyword.
   // baz will NOT be mangled because it is not marked
   // with the "mangle" keyword.
   int mangle bar = 0;
   int baz = 0;
-endnamespace
+}
 // Namespaces may be nested and to access identifiers, double
 // colons are used.
 Foo::bar
@@ -41,10 +43,10 @@ Foo__bar
 ### Syntax
 
 ``` CPP
-class Point // Name is mangled automatically if in namespace.
+class Point { // Name is mangled automatically if in namespace.
   int x;
   int y;
-impl // May be "endclass" if there are no methods.
+} impl { // May be "endclass" if there are no methods.
 
   // Will be prefixed with "Point__" because of "method" keyword
   void method move(Self, int x, int y) {
@@ -62,7 +64,7 @@ impl // May be "endclass" if there are no methods.
   destructor(Self) {
     free(self);
   }
-endclass
+}
 
 Point p = new Point(10, 10);
 Point::move(p, 20, 20);
@@ -113,12 +115,12 @@ Point__dtor(p);
 // In emission, the first generic marks a spot for generic code generation called
 // GenericGenPoint. The declaration of generic code generates
 // nothing on the spot.
-generic add T:
+generic add T {
 // genericAlias is just a syntactic sugar for the name of the generic code.
 T genericAlias (T a, T b) {
   return a + b;
 }
-endgeneric
+}
 
 // Upon calling the function with a type, a function for that 
 // specified type will be created once at GenericGenPoint downwards
@@ -143,6 +145,9 @@ float add__float(float a, float b) {
 add__int(10, 10);
 add__float(3.1, 1.2);
 ```
+## Tweaks
+
+### The symbol '$' becomes "struct "
 
 ## Notes
 

@@ -9,6 +9,7 @@ public enum TokenType
   Mangle,
   Identifier,
   Colon,
+  Dollar,
   Source,
   CurlyBlock,
   Class,

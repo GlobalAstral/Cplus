@@ -56,6 +56,8 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
     
     if (TryConsume(','))
       return new(TokenType.Comma, line, ",");
+    if (TryConsume('$'))
+      return new(TokenType.Dollar, line, "$");
     
     if (char.IsAsciiLetter(Peek()) || PeekEqual('_'))
     {
