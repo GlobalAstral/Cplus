@@ -46,7 +46,7 @@ Foo__bar
 class Point { // Name is mangled automatically if in namespace.
   int x;
   int y;
-} impl { // May be "endclass" if there are no methods.
+} impl { // May be omitted if there are no methods.
 
   // Will be prefixed with "Point__" because of "method" keyword
   void method move(Self, int x, int y) {
