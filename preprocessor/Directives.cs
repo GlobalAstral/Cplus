@@ -22,12 +22,18 @@ public partial class Preprocessor
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       namespaces.Push(name);
 
+      RemoveSource();
+      Token[] content = TryConsumeErr(TokenType.CurlyBlock).GetTokens()!;
       StringBuilder builder = new();
-      DoUntil(TokenType.EndNamespace, () =>
+
+      Switch(content, () =>
       {
-        string? s = ProcessOne();
-        if (s != null)
-          builder.Append(s);
+        while (HasPeek())
+        {
+          string? s = ProcessOne();
+          if (s != null)
+            builder.Append(s);
+        }
       });
 
       namespaces.Pop();
@@ -62,33 +68,40 @@ public partial class Preprocessor
         name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       currentClass = MangleNamespaces(name);
 
-      bool hasimpl = LookAhead(TokenType.Impl);
-
       StringBuilder builder = new();
 
       builder.Append($"typedef struct {currentClass} {{");
 
-      void temp()
+      RemoveSource();
+      Token[] structContent = TryConsumeErr(TokenType.CurlyBlock).GetTokens()!;
+
+      Switch(structContent, () =>
       {
-        string? s = ProcessOne();
-        if (s != null)
-          builder.Append(s);
-      }
-
-      if (hasimpl)
-        DoUntil(TokenType.Impl, temp);
-      else
-        DoUntil(TokenType.EndClass, temp);
-
-      builder.Append($"}} *{currentClass};");
-
-      if (hasimpl)
-      {
-        DoUntil(TokenType.EndClass, () =>
+        while (HasPeek())
         {
           string? s = ProcessOne();
           if (s != null)
             builder.Append(s);
+        }
+      });
+
+      builder.Append($"}} *{currentClass};");
+
+      if (LookAhead(TokenType.Impl))
+      {
+        RemoveSource();
+        TryConsumeErr(TokenType.Impl);
+        RemoveSource();
+        Token[] implContent = TryConsumeErr(TokenType.CurlyBlock).GetTokens()!;
+
+        Switch(implContent, () =>
+        {
+          while (HasPeek())
+          {
+            string? s = ProcessOne();
+            if (s != null)
+              builder.Append(s);
+          }
         });
       }
 
@@ -173,16 +186,24 @@ public partial class Preprocessor
       List<string> generics = [];
       RemoveSource();
       
-      DoUntil(TokenType.Colon, () =>
+      DoUntilP(TokenType.CurlyBlock, () =>
       {
         generics.Add(TryConsumeErr(TokenType.Identifier).GetStr()!);
         RemoveSource();
       });
       
       List<Token> toks = [];
-      DoUntil(TokenType.EndGeneric, () => toks.Add(Consume()!));
+
+      Token[] content = TryConsumeErr(TokenType.CurlyBlock).GetTokens()!;
+      Switch(content, () =>
+      {
+        while (HasPeek())
+          toks.Add(Consume()!);
+      });
+
       Generics.Add(new Generic(name, [ .. generics ], [ .. toks ]));
       GenericsGenPoint ??= output.Count;
+
       return null;
     });
 
@@ -190,10 +211,33 @@ public partial class Preprocessor
 
     Register(WakeupC(TokenType.GenericAlias), () =>
     {
-      RemoveSource();
       if (GenericContext.Count == 0)
         throw new Exception("Cannot use genericAlias outside of GenericContext");
       return GenericContextName;
+    });
+
+    //! CurlyBlock
+
+    Register(Wakeup(TokenType.CurlyBlock), () =>
+    {
+      Token[] content = Consume()!.GetTokens()!;
+
+      StringBuilder builder = new();
+      builder.Append('{');
+
+      Switch(content, () =>
+      {
+        while (HasPeek())
+        {
+          string? s = ProcessOne();
+          if (s != null)
+            builder.Append(s);
+        }
+      });
+
+      builder.Append('}');
+
+      return builder.ToString();
     });
   }
 }

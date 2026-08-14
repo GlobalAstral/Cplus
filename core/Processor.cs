@@ -56,21 +56,20 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
       throw new Exception($"Expected {find}");
   }
 
-  protected void DoUntilP(C prefix, C find, Action action)
+  protected void DoUntilP(C find, Action action)
   {
     bool found = false;
     while (HasPeek())
     {
-      if (PeekEqual(prefix) && PeekEqual(find, 1))
+      if (PeekEqual(find))
       {
-        Consume(2);
         found = true;
         break;
       }
       action();
     }
     if (!found)
-      throw new Exception($"Expected {prefix} {find}");
+      throw new Exception($"Expected {find}");
   }
 
   protected void Switch(I[] content, Action action)

@@ -61,17 +61,20 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
     ident.Append(TryConsumeErr(TokenType.Identifier)!.GetStr()!);
     if (GenericContext.ContainsKey(ident.ToString()))
       return GenericContext[ident.ToString()];
+
     while (PeekEqual(TokenType.Colon) && PeekEqual(TokenType.Colon, 1))
     {
       Consume(2);
       string name = TryConsumeErr(TokenType.Identifier)!.GetStr()!;
       ident.Append($"__{name}");
     }
+
     Generic? generic = Generics.Find((g) => g.Name == ident.ToString());
     if (!generics || generic == null)
       return ident.ToString();
     
     List<string> resolvedTypes = [];
+    RemoveSource();
     TryConsumeErr(TokenType.LAngle);
     RemoveSource();
 

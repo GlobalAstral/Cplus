@@ -33,6 +33,18 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       return new(TokenType.Source, line, builder.ToString());
     }
 
+    if (TryConsume('{'))
+    {
+      List<Token> tokens = [];
+      DoUntil('}', () =>
+      {
+        Token? tk = ProcessOne();
+        if (tk != null)
+          tokens.Add(tk);
+      });
+      return new(TokenType.CurlyBlock, line, tokens.ToArray());
+    }
+
     if (TryConsume('<'))
       return new(TokenType.LAngle, line, "<");
 
@@ -61,15 +73,6 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "mangle")
         return new(TokenType.Mangle, line);
-
-      if (buffer == "endnamespace")
-        return new(TokenType.EndNamespace, line);
-      
-      if (buffer == "endclass")
-        return new(TokenType.EndClass, line);
-      
-      if (buffer == "endgeneric")
-        return new(TokenType.EndGeneric, line);
 
       if (buffer == "class")
         return new(TokenType.Class, line);
