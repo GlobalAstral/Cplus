@@ -273,5 +273,34 @@ public partial class Preprocessor
 
       return null;
     });
+
+    //! Lambda
+
+    Register(WakeupC(TokenType.Lambda), () =>
+    {
+      RemoveSource();
+      TryConsumeErr(TokenType.LAngle);
+      List<Token> retType = [];
+      DoUntil(TokenType.RAngle, () => retType.Add(Consume()!));
+
+      List<Token> content = [];
+
+      DoUntilP(TokenType.CurlyBlock, () => content.Add(Consume()!));
+      content.Add(Consume()!);
+
+      string lambdaName = GenerateLambdaName();
+
+      GenerateLambda(lambdaName, [.. retType], [.. content]);
+
+      return lambdaName;
+    });
+
+    //! LambdaMarker
+
+    Register(WakeupC(TokenType.LambdaMarker), () =>
+    {
+      LambdaGenPoint ??= output.Count;
+      return null;
+    });
   }
 }

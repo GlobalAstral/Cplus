@@ -1,5 +1,6 @@
 using System.Text;
 using core;
+using K4os.Hash.xxHash;
 using tokens;
 
 namespace preprocessor;
@@ -11,13 +12,73 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
   private readonly List<Generic> Generics = [];
   private readonly List<string> GeneratedGenerics = [];
   private int? GenericsGenPoint = null;
+  private int? LambdaGenPoint = null;
   private readonly Dictionary<string, string> GenericContext = [];
   private string? GenericContextName = null;
 
+  private readonly long RANDOM_FACTOR = new Random().NextInt64();
+  private long LAMBDA_NUMBER = 0;
+  private readonly HashSet<string> Lambdas = [];
+
+  string GenerateLambdaName()
+  {
+    byte[] data = new byte[16];
+
+    BitConverter.GetBytes(LAMBDA_NUMBER++).CopyTo(data, 0);
+    BitConverter.GetBytes(RANDOM_FACTOR).CopyTo(data, 8);
+
+    ulong hash = XXH64.DigestOf(data);
+    string name = $"L__{hash}";
+
+    while (Lambdas.Contains(name))
+      name = GenerateLambdaName();
+
+    Lambdas.Add(name);
+
+    return name;
+  }
 
   private void RemoveSource()
   {
     while (TryConsume(TokenType.Source));
+  }
+
+  private void GenerateLambda(string name, Token[] retType, Token[] content)
+  {
+    if (LambdaGenPoint == null)
+      throw new Exception("No Lambda generation point is set");
+
+    StringBuilder builder = new();
+
+    Switch(retType, () =>
+    {
+      while (HasPeek())
+      {
+        string? temp = ProcessOne();
+        if (temp != null)
+          builder.Append(temp);
+      }
+    });
+    
+    builder.Append($" {name}");
+
+    Switch(content, () =>
+    {
+      while (HasPeek())
+      {
+        string? temp = ProcessOne();
+        if (temp != null)
+          builder.Append(temp);
+      }
+    });
+
+    builder.Append("\n\n");
+
+    string result = builder.ToString();
+    int prev = output.Count;
+    output.Insert((int)LambdaGenPoint, result);
+    int delta = output.Count - prev;
+    GenericsGenPoint += delta;
   }
 
   private void GenerateGeneric(Generic generic, string[] resolvedTypes, string id)

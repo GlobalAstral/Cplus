@@ -29,6 +29,8 @@ public enum TokenType
   LAngle,
   RAngle,
   Import,
+  Lambda,
+  LambdaMarker,
 }
 
 public record Token(TokenType Type, int Line, object? Value)

@@ -15,6 +15,8 @@
 
 - ### Imports
 
+- ### Lambdas
+
 ## Namespace
 
 ### Syntax
@@ -156,6 +158,36 @@ add__float(3.1, 1.2);
 import "foo.hcp"
 // All the contents from the .hcp file is Tokenized and inserted
 // in the import's place
+```
+
+## Lambdas
+
+```cpp
+
+LambdaMarker // Marks the starting point lambdas will be generated from
+
+// A lambda can also be called on the spot as it is being created Ex:
+//  lambda<int>(int a, int b) { ... }(2, 2);
+int (*foo)(int, int) = lambda<int>(int a, int b) {
+  return a * b;
+};
+
+int bar = foo(2, 2); // Used normally
+
+```
+
+Becomes
+
+```cpp
+// Lambda name is a hashed, semi randomic value combined with a counter. 
+// Extremely hard to collide on accident.
+int L__3679922823221745344(int a, int b) {
+  return a * b;
+}
+
+int (*foo)(int, int) = L__3679922823221745344;
+int bar = foo(2, 2); //Stays the same
+
 ```
 
 ## Tweaks

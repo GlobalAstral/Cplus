@@ -109,6 +109,12 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "import")
         return new(TokenType.Import, line);
+
+      if (buffer == "lambda")
+        return new(TokenType.Lambda, line);
+
+      if (buffer == "LambdaMarker")
+        return new(TokenType.LambdaMarker, line);
       
       return new(TokenType.Identifier, line, buffer);
     }
