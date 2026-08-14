@@ -12,6 +12,7 @@ public enum TokenType
   Dollar,
   Source,
   CurlyBlock,
+  StringLiteral,
   Class,
   Impl,
   Method,
@@ -26,7 +27,8 @@ public enum TokenType
   GenericAlias,
   Comma,
   LAngle,
-  RAngle
+  RAngle,
+  Import,
 }
 
 public record Token(TokenType Type, int Line, object? Value)

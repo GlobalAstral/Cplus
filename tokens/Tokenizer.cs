@@ -18,10 +18,8 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
     if (TryConsume('"'))
     {
       StringBuilder builder = new();
-      builder.Append('"');
       DoUntil('"', () => builder.Append(Consume()));
-      builder.Append('"');
-      return new(TokenType.Source, line, builder.ToString());
+      return new(TokenType.StringLiteral, line, builder.ToString());
     }
 
     if (TryConsume('\''))
@@ -108,6 +106,9 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "genericAlias")
         return new(TokenType.GenericAlias, line);
+
+      if (buffer == "import")
+        return new(TokenType.Import, line);
       
       return new(TokenType.Identifier, line, buffer);
     }

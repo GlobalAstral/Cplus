@@ -244,6 +244,30 @@ public partial class Preprocessor
 
     Register(WakeupC(TokenType.Dollar), () => "struct ");
 
-    
+    //! String Literal
+
+    Register(Wakeup(TokenType.StringLiteral), () => $"\"{Consume()!.GetStr()}\"");
+
+    //! Import
+
+    Register(WakeupC(TokenType.Import), () =>
+    {
+      RemoveSource();
+      string path = TryConsumeErr(TokenType.StringLiteral).GetStr()!;
+
+      if (path.Split('.').Last() != "hcp")
+        throw new Exception($"Cannot import {path} file is not a C+ header");
+
+      if (!File.Exists(path))
+        throw new Exception($"Cannot import {path} file does not exist");
+
+      string content = File.ReadAllText(path);
+
+      Tokenizer tokenizer = new([.. content]);
+      Token[] tokens = tokenizer.Process();
+      InsertInput(peek, tokens);
+
+      return null;
+    });
   }
 }

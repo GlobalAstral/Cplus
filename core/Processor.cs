@@ -12,6 +12,12 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
   protected I? Peek(int offset = 0) => HasPeek(offset) ? Input[peek + offset] : default;
   protected bool PeekEqual(C value, int offset = 0) => Equ(Peek(offset), value);
   protected I? Consume() => HasPeek() ? Input[peek++] : default;
+  protected void InsertInput(int index, I[] toadd)
+  {
+    List<I> temp = [.. Input];
+    temp.InsertRange(index, toadd);
+    Input = [.. temp];
+  }
   protected bool TryConsume(C value)
   {
     if (PeekEqual(value))
