@@ -37,7 +37,7 @@ public abstract class Processor<I, C, O>(I[] Input, Func<I?, C, bool> Equ)
   }
   protected abstract O? ProcessOne();
 
-  public O[] Process()
+  public virtual O[] Process()
   {
     while (HasPeek())
     {

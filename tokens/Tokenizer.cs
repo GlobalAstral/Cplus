@@ -121,4 +121,11 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
     return new(TokenType.Source, line, Consume().ToString());
   }
+
+  public override Token[] Process()
+  {
+    Token[] tokens = base.Process();
+    Optimizer optimizer = new(tokens);
+    return optimizer.Process();
+  }
 } 
