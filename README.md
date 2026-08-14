@@ -13,6 +13,8 @@
 
 - ### Syntax Tweaks
 
+- ### Imports
+
 ## Namespace
 
 ### Syntax
@@ -145,9 +147,28 @@ float add__float(float a, float b) {
 add__int(10, 10);
 add__float(3.1, 1.2);
 ```
+
+## Imports
+
+### Syntax
+
+```cpp
+import "foo.hcp"
+// All the contents from the .hcp file is Tokenized and inserted
+// in the import's place
+```
+
 ## Tweaks
 
-### The symbol '$' becomes "struct "
+```cpp
+$Foo
+```
+
+Becomes
+
+```cpp
+struct Foo
+```
 
 ## Notes
 
