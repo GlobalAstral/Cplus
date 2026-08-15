@@ -31,7 +31,7 @@ class Program
       if (f.StartsWith('-'))
         continue;
       if (!f.EndsWith(".cp") && !f.EndsWith(".hcp"))
-        throw new ArgumentException($"Cannot process file {f}. Only .c and .h files are allowed");
+        throw new ArgumentException($"Cannot process file {f}. Only .cp and .hcp files are allowed");
       
       if (!File.Exists(f))
         throw new ArgumentException($"File {f} does not exist");

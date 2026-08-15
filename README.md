@@ -39,6 +39,7 @@ Becomes
 
 ``` CPP
 int Foo__bar = 0;
+int baz = 0;
 Foo__bar
 ```
 
