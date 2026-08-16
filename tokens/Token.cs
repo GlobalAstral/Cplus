@@ -31,6 +31,9 @@ public enum TokenType
   Import,
   Lambda,
   LambdaMarker,
+  Enqueue,
+  FlushQueue,
+  ClearQueue
 }
 
 public record Token(TokenType Type, int Line, object? Value)

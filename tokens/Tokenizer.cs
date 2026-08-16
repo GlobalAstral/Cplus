@@ -116,6 +116,15 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       if (buffer == "LambdaMarker")
         return new(TokenType.LambdaMarker, line);
       
+      if (buffer == "Enqueue")
+        return new(TokenType.Enqueue, line);
+
+      if (buffer == "FlushQueue")
+        return new(TokenType.FlushQueue, line);
+
+      if (buffer == "ClearQueue")
+        return new(TokenType.ClearQueue, line);
+      
       return new(TokenType.Identifier, line, buffer);
     }
 

@@ -20,6 +20,8 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
   private long LAMBDA_NUMBER = 0;
   private readonly HashSet<string> Lambdas = [];
 
+  private readonly Stack<Defer> defers = [];
+
   string GenerateLambdaName()
   {
     byte[] data = new byte[16];

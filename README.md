@@ -17,6 +17,8 @@
 
 - ### Lambdas
 
+- ### Enqueue / FlushQueue / ClearQueue
+
 ## Namespace
 
 ### Syntax
@@ -163,6 +165,8 @@ import "foo.hcp"
 
 ## Lambdas
 
+### Syntax
+
 ```cpp
 
 LambdaMarker // Marks the starting point lambdas will be generated from
@@ -191,7 +195,46 @@ int bar = foo(2, 2); //Stays the same
 
 ```
 
+## Enqueue / FlushQueue / ClearQueue
+
+### Syntax
+
+```cpp
+  // Pushes the block content in the queue.
+  Enqueue {
+    foo();
+  }
+
+  // The contents of the queue is inserted
+  FlushQueue
+
+  Enqueue {
+    bar();
+  }
+
+  FlushQueue
+  // Clears the queue
+  ClearQueue
+  // Inserts nothing
+  FlushQueue
+```
+
+Becomes
+
+```cpp
+// #1 Flush
+foo();
+
+// #2 Flush
+foo();
+bar();
+
+// #3 Flush
+```
+
 ## Tweaks
+
+### Syntax
 
 ```cpp
 $Foo

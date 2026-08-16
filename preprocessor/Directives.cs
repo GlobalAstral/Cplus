@@ -302,5 +302,32 @@ public partial class Preprocessor
       LambdaGenPoint ??= output.Count;
       return null;
     });
+
+    //! Defer
+
+    Register(WakeupC(TokenType.Enqueue), () =>
+    {
+      RemoveSource();
+      Token[] body = TryConsumeErr(TokenType.CurlyBlock).GetTokens()!;
+      defers.Push(new(body));
+      return null;
+    });
+
+    //! ResolveDefers
+
+    Register(WakeupC(TokenType.FlushQueue), () =>
+    {
+      foreach (Defer defer in defers)
+        InsertInput(peek, defer.Tokens);
+      return null;
+    });
+
+    //! CleanDefers
+
+    Register(WakeupC(TokenType.ClearQueue), () =>
+    {
+      defers.Clear();
+      return null;
+    });
   }
 }
