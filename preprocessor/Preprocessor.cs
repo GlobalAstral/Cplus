@@ -144,7 +144,7 @@ public partial class Preprocessor(Token[] tokens) : Processor<Token, TokenType, 
     while (HasPeek())
     {
       StringBuilder builder = new();
-      TokenType needed = LookAhead(TokenType.RAngle) ? TokenType.RAngle : TokenType.Comma;
+      TokenType needed = LookAhead(TokenType.Comma) ? TokenType.Comma : TokenType.RAngle;
       bool last = needed == TokenType.RAngle;
       
       string? temp = ProcessOne();
