@@ -19,6 +19,8 @@
 
 - ### Enqueue / FlushQueue / ClearQueue
 
+- ### Using / Using Callable
+
 ## Namespace
 
 ### Syntax
@@ -244,6 +246,22 @@ Becomes
 
 ```cpp
 struct Foo
+```
+
+## Using / Using Callable
+
+### Syntax
+
+```cpp
+using uint64 = unsigned long long;
+using callable Foo<void, int, int>
+```
+
+Becomes
+
+```cpp
+typedef unsigned long long uint64;
+typedef void (*Foo)(int, int);
 ```
 
 ## Notes
