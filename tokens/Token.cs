@@ -33,7 +33,10 @@ public enum TokenType
   LambdaMarker,
   Enqueue,
   FlushQueue,
-  ClearQueue
+  ClearQueue,
+  Using,
+  Equals,
+  Semi
 }
 
 public record Token(TokenType Type, int Line, object? Value)

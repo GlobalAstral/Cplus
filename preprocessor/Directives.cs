@@ -329,5 +329,40 @@ public partial class Preprocessor
       defers.Clear();
       return null;
     });
+
+    //! Semi
+
+    Register(Wakeup(TokenType.Semi), () => Consume()!.GetStr());
+
+    //! Equals
+
+    Register(Wakeup(TokenType.Equals), () => Consume()!.GetStr());
+
+    //! Using
+
+    Register(WakeupC(TokenType.Using), () =>
+    {
+      RemoveSource();
+      string name = MangleNamespaces(TryConsumeErr(TokenType.Identifier).GetStr()!);
+      RemoveSource();
+      TryConsumeErr(TokenType.Equals);
+      
+      StringBuilder builder = new();
+      
+      builder.Append("typedef ");
+
+      DoUntil(TokenType.Semi, () =>
+      {
+        string? temp = ProcessOne();
+        if (temp != null)
+          builder.Append(temp);
+      });
+
+      builder.Append($" {name};");
+
+      return builder.ToString();
+    });
+
+
   }
 }

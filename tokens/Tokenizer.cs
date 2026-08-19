@@ -56,6 +56,10 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
       return new(TokenType.Comma, line, ",");
     if (TryConsume('$'))
       return new(TokenType.Dollar, line, "$");
+    if (TryConsume(';'))
+      return new(TokenType.Semi, line, ";");
+    if (TryConsume('='))
+      return new(TokenType.Equals, line, "=");
     
     if (char.IsAsciiLetter(Peek()) || PeekEqual('_'))
     {
@@ -124,6 +128,9 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "ClearQueue")
         return new(TokenType.ClearQueue, line);
+
+      if (buffer == "using")
+        return new(TokenType.Using, line);
       
       return new(TokenType.Identifier, line, buffer);
     }
