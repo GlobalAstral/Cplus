@@ -343,12 +343,65 @@ public partial class Preprocessor
     Register(WakeupC(TokenType.Using), () =>
     {
       RemoveSource();
+
+      bool callable = TryConsume(TokenType.Callable);
+
+      if (callable)
+        RemoveSource();
+
       string name = MangleNamespaces(TryConsumeErr(TokenType.Identifier).GetStr()!);
+
+      StringBuilder builder = new();
+
+      if (callable)
+      {
+        RemoveSource();
+
+        TryConsumeErr(TokenType.LAngle);
+
+        List<string> args = [];
+
+        RemoveSource();
+
+        while (HasPeek())
+        {
+          TokenType needed = LookAhead(TokenType.Comma) ? TokenType.Comma : TokenType.RAngle;
+          bool last = needed == TokenType.RAngle;
+          RemoveSource();
+          string? temp = ProcessOne();
+          if (temp != null)
+            builder.Append(temp);
+          
+          TryConsumeErr(needed);
+          
+          args.Add(builder.ToString());
+          builder.Clear();
+          if (last)
+            break;
+        }
+
+        builder.Clear();
+
+        if (args.Count < 1)
+          throw new Exception($"Required at least one argument in using callable {name}");
+
+        builder.Append($"typedef {args[0]} (*{name})(");
+
+        for (int i = 1; i < args.Count; i++)
+        {
+          if (i > 1)
+            builder.Append(", ");
+          builder.Append(args[i]);
+        }
+
+        builder.Append(");");
+
+        return builder.ToString();
+      }
+
       RemoveSource();
       TryConsumeErr(TokenType.Equals);
-      
-      StringBuilder builder = new();
-      
+            
       builder.Append("typedef ");
 
       DoUntil(TokenType.Semi, () =>

@@ -36,7 +36,8 @@ public enum TokenType
   ClearQueue,
   Using,
   Equals,
-  Semi
+  Semi,
+  Callable,
 }
 
 public record Token(TokenType Type, int Line, object? Value)

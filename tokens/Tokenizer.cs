@@ -131,6 +131,9 @@ class Tokenizer(char[] content) : Processor<char, char, Token>(content, (a, b) =
 
       if (buffer == "using")
         return new(TokenType.Using, line);
+
+      if (buffer == "callable")
+        return new(TokenType.Callable, line);
       
       return new(TokenType.Identifier, line, buffer);
     }
